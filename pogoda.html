@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2f6fb3">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Погода">
+<title>Погода</title>
+<style>
+@property --sky1{syntax:'<color>';inherits:true;initial-value:#4a90d9}
+@property --sky2{syntax:'<color>';inherits:true;initial-value:#9cc7f0}
+:root{--ink:#fff;--mut:rgba(255,255,255,.74);--paper:#1d3557;--line:rgba(255,255,255,.2);--sun:#ffd36e;--sky1:#2f6fb3;--sky2:#6fb0ea}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,.grid>div{touch-action:manipulation}
+#fail{display:none;margin:12px 18px;padding:12px 14px;border-radius:14px;background:rgba(0,0,0,.35);font-size:13px;line-height:1.5;word-break:break-word}
+@media (max-width:480px){.temp{font-size:78px}.rt{font-size:40px}.rx b{font-size:24px}}
+body{font-family:"Avenir Next","Segoe UI Variable","Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(175deg,var(--sky1),var(--sky2)) fixed;color:#fff;min-height:100vh;transition:--sky1 .6s,--sky2 .6s}
+body.dusk{--sky1:#6d4789;--sky2:#f0a070}body.night{--sky1:#0f1a3a;--sky2:#34457a}body.cloud{--sky1:#55657a;--sky2:#8d9db0}body.rain{--sky1:#2b4059;--sky2:#5f7b99}
+.hero{padding:calc(14px + env(safe-area-inset-top)) 18px 10px}
+.glass{background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.22);border-radius:24px;padding:16px 16px 12px;box-shadow:0 10px 40px rgba(10,30,70,.18)}
+.hint{font-size:12.5px;color:var(--mut);margin-bottom:6px}
+.top{display:flex;gap:8px;max-width:1000px;margin:0 auto 22px;position:relative}
+.top input{flex:1;min-width:0;border:0;border-radius:12px;padding:12px 14px;font:inherit;font-size:16px;background:rgba(255,255,255,.22);color:#fff;outline-offset:2px}
+.top input::placeholder{color:rgba(255,255,255,.8)}
+.top button{border:0;border-radius:12px;width:46px;font-size:18px;background:rgba(255,255,255,.22);color:#fff;cursor:pointer}
+.sug{position:absolute;top:50px;left:0;right:54px;background:var(--paper);color:var(--ink);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.25);overflow:hidden;z-index:5}
+.sug div{padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--line)}.sug div:last-child{border:0}
+.sug small{color:var(--mut)}
+.now{max-width:1000px;margin:0 auto}
+.city{font-size:18px;opacity:.95}
+.temp{font-size:92px;font-weight:200;line-height:1;margin:6px 0 2px;letter-spacing:-3px}
+.desc{font-size:19px}
+.meta{margin-top:10px;font-size:14px;opacity:.9;display:flex;gap:16px;flex-wrap:wrap}
+main{max-width:1000px;margin:0 auto;padding:6px 18px calc(30px + env(safe-area-inset-bottom))}
+nav{display:flex;gap:22px;border-bottom:1px solid var(--line);margin:0 0 18px;position:sticky;top:0;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);z-index:4}
+nav button{font:inherit;font-size:16px;background:none;border:0;color:var(--mut);padding:14px 0 11px;border-bottom:3px solid transparent;cursor:pointer}
+nav button[aria-selected=true]{color:var(--ink);font-weight:600;border-color:var(--sun)}
+h2{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--mut)}
+.narrow{max-width:560px}
+.rd{display:flex;align-items:center;gap:14px;margin:4px 0 8px;min-height:66px}
+.re{font-size:38px}.rt{font-size:46px;font-weight:200;letter-spacing:-1px}
+.rx{font-size:14px;color:var(--mut);line-height:1.45}.rx b{display:block;color:var(--ink);font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;font-size:27px;font-weight:600;line-height:1.1}.rx b em{font-style:normal;font-weight:400;color:var(--sun);margin-left:10px}.rx .dt{display:block;font-size:13px;margin:3px 0 5px;text-transform:capitalize}
+#ch{touch-action:pan-y;cursor:ew-resize;outline-offset:4px;user-select:none}
+.ring{transform-box:fill-box;transform-origin:center;animation:pl 1.9s ease-out infinite}
+@keyframes pl{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.1);opacity:0}}
+@media (prefers-reduced-motion:reduce){.ring{animation:none;opacity:.35}.sunA,.sunB,.rays,.halo,.gl{animation:none}}
+.sunA{animation:rise 3.6s cubic-bezier(.3,.7,.3,1) infinite}.sunB{animation:sink 3.6s cubic-bezier(.5,0,.7,.4) infinite}
+@keyframes rise{0%{transform:translateY(10px)}60%,100%{transform:translateY(-1px)}}
+@keyframes sink{0%,40%{transform:translateY(-1px)}100%{transform:translateY(11px)}}
+.rays{transform-box:fill-box;transform-origin:center;animation:spin 16s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gl{animation:gl 3.4s ease-in-out infinite}@keyframes gl{0%,100%{opacity:.5}50%{opacity:1}}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-top:4px}
+.dc{padding:8px 0 6px;border-radius:16px;cursor:pointer}.dc.on{background:rgba(255,255,255,.2)}
+.dc .wd{display:block;font-size:12px;color:var(--mut);text-transform:capitalize}
+.dc .dn{display:block;font-size:20px;font-weight:600}
+.dc .e{font-size:26px;display:block;margin:6px 0}
+.pb{display:block;width:8px;height:34px;margin:0 auto;border-radius:4px;background:rgba(255,255,255,.18);position:relative;overflow:hidden}
+.pb i{position:absolute;bottom:0;left:0;right:0;border-radius:4px;background:linear-gradient(0deg,#4df3ff,#8a7bff);box-shadow:0 0 8px #4df3ff}
+.dc .pm{display:block;font-size:11px;color:var(--mut);margin-top:4px}
+#dch{touch-action:pan-y;cursor:pointer}
+.halo{animation:halo 3.6s ease-in-out infinite}@keyframes halo{0%,100%{opacity:.14}60%{opacity:.42}}
+.grid{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;text-align:center;font-size:11px;color:var(--mut);margin-top:8px}
+@media (max-width:700px){.grid{grid-template-columns:repeat(12,1fr)}}
+.grid>div{padding:6px 0;border-radius:10px;cursor:pointer}
+.grid>div.on{background:rgba(255,255,255,.24);color:var(--ink)}
+.grid b{display:block;font-size:12.5px;font-weight:600;color:var(--ink);margin-top:2px}
+.grid .e{font-size:18px;display:block;margin:3px 0}
+.day{display:grid;grid-template-columns:78px 30px 1fr 84px;align-items:center;gap:8px;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
+.day .rng{height:6px;border-radius:3px;background:var(--line);position:relative}
+.day .rng span{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#6aa9e8,var(--sun))}
+.day .t{text-align:right;font-variant-numeric:tabular-nums}.day .t small{color:var(--mut)}
+.kp{display:flex;gap:26px;flex-wrap:wrap;margin:6px 0 10px}
+.kp div{font-size:13px;color:var(--mut)}.kp b{display:block;font-size:26px;font-weight:300;color:var(--ink)}
+.in{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mut);margin:12px 0}
+.in input{width:96px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;font-size:16px;background:rgba(255,255,255,.15);color:var(--ink)}
+svg{width:100%;height:auto;display:block;overflow:visible}
+.note{font-size:12px;color:var(--mut);margin-top:16px;line-height:1.5}
+.err{padding:30px 0;color:var(--mut);text-align:center}
+:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="fail"></div>
+<noscript><div style="padding:20px">Для роботи додатка потрібен JavaScript. Відкрийте сторінку в Chrome чи Safari.</div></noscript>
+<header class="hero" id="hero">
+  <div class="top">
+    <input id="q" type="search" placeholder="Знайти місто" autocomplete="off" aria-label="Пошук міста">
+    <button id="geo" title="Моє місцезнаходження" aria-label="Моє місцезнаходження">⌖</button>
+    <div class="sug" id="sug" hidden></div>
+  </div>
+  <div class="now" id="now"></div>
+</header>
+<main>
+  <nav role="tablist">
+    <button role="tab" data-t="h" aria-selected="true">Сьогодні</button>
+    <button role="tab" data-t="d" aria-selected="false">7 днів</button>
+    <button role="tab" data-t="s" aria-selected="false">Сонце</button>
+  </nav>
+  <section id="v"></section>
+</main>
+<script>
+window.addEventListener('error',e=>{const f=document.getElementById('fail');f.style.display='block';f.textContent='Помилка: '+e.message+' (рядок '+e.lineno+')'});
+if(location.protocol==='file:'){window.addEventListener('DOMContentLoaded',()=>{const f=document.getElementById('fail');f.style.display='block';f.textContent='Файл відкрито локально. Якщо погода не завантажується, відкрийте сторінку за посиланням (Netlify чи GitHub Pages), а не з файлів телефона.'})}
+const $=id=>document.getElementById(id);
+const W={0:['☀️','Ясно'],1:['🌤️','Переважно ясно'],2:['⛅','Мінлива хмарність'],3:['☁️','Хмарно'],45:['🌫️','Туман'],48:['🌫️','Паморозь'],51:['🌦️','Мряка'],53:['🌦️','Мряка'],55:['🌦️','Сильна мряка'],56:['🌧️','Крижана мряка'],57:['🌧️','Крижана мряка'],61:['🌧️','Невеликий дощ'],63:['🌧️','Дощ'],65:['🌧️','Сильний дощ'],66:['🌧️','Крижаний дощ'],67:['🌧️','Крижаний дощ'],71:['🌨️','Невеликий сніг'],73:['🌨️','Сніг'],75:['🌨️','Сильний сніг'],77:['🌨️','Снігові зерна'],80:['🌦️','Короткочасний дощ'],81:['🌧️','Злива'],82:['⛈️','Сильна злива'],85:['🌨️','Снігопад'],86:['🌨️','Сильний снігопад'],95:['⛈️','Гроза'],96:['⛈️','Гроза з градом'],99:['⛈️','Гроза з градом']};
+const wi=c=>W[c]||['·','—'];
+const r=n=>Math.round(n);
+let place=JSON.parse(localStorage.getItem('place')||'null')||{name:'Львів',country:'Україна',lat:49.8397,lon:24.0297};
+let kwp=Number(localStorage.getItem('kwp'))||100;
+let D=null,tab='h';
+
+async function load(){
+  $('now').innerHTML='<div class="city">'+place.name+'</div><div class="desc" style="margin-top:20px">Завантаження…</div>';
+  const u='https://api.open-meteo.com/v1/forecast?latitude='+place.lat+'&longitude='+place.lon
+   +'&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day'
+   +'&hourly=temperature_2m,precipitation_probability,weather_code,shortwave_radiation,apparent_temperature,wind_speed_10m,relative_humidity_2m'
+   +'&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,shortwave_radiation_sum,sunrise,sunset'
+   +'&wind_speed_unit=ms&timezone=auto&forecast_days=7';
+  try{
+    const res=await fetch(u); if(!res.ok) throw 0;
+    D=await res.json(); localStorage.setItem('place',JSON.stringify(place)); draw(); fetchBand();
+  }catch(e){
+    $('now').innerHTML='<div class="city">'+place.name+'</div>';
+    $('v').innerHTML='<div class="err">Не вдалося отримати прогноз. Перевірте інтернет і спробуйте ще раз.</div>';
+  }
+}
+
+function draw(){sel=0;dsel=0;
+  const c=D.current,[em,tx]=wi(c.weather_code);
+  document.body.className=skyCls(c.weather_code,!c.is_day,false).trim();
+  $('now').innerHTML='<div class="city">'+place.name+(place.country?', '+place.country:'')+'</div>'
+   +'<div class="temp">'+r(c.temperature_2m)+'°</div><div class="desc">'+em+' '+tx+'</div>'
+   +'<div class="meta"><span>Відчувається як '+r(c.apparent_temperature)+'°</span><span>Вітер '+r(c.wind_speed_10m)+' м/с</span><span>Вологість '+c.relative_humidity_2m+'%</span></div>';
+  view();
+}
+
+function nowIdx(){const p=D.current.time.slice(0,13)+':00';const i=D.hourly.time.indexOf(p);return i<0?0:i}
+
+function view(){
+  document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===tab));
+  if(!D) return;
+  $('v').className=tab==='s'?'narrow':'';
+  $('v').innerHTML=tab==='h'?vHours():tab==='d'?vDays():'<div class="glass">'+vSolar()+'</div>';
+  if(tab==='h') scrub();
+  if(tab==='d') daysInit();
+  const k=$('kwp'); if(k) k.oninput=()=>{kwp=Math.max(0,Number(k.value)||0);localStorage.setItem('kwp',kwp);$('v').innerHTML='<div class="glass">'+vSolar()+'</div>';$('kwp').focus();const e=$('kwp');e.setSelectionRange(e.value.length,e.value.length)};
+}
+
+function skyCls(code,night,dusk){return night?' night':code>=51?' rain':[3,45,48].includes(code)?' cloud':dusk?' dusk':''}
+function clock(x){const a=x.split(':');return +a[0]+ +a[1]/60}
+const p2=n=>(n<10?'0':'')+n;
+async function fetchBand(){
+  const d=D;
+  try{
+    const j=await (await fetch('https://api.open-meteo.com/v1/forecast?latitude='+place.lat+'&longitude='+place.lon+'&hourly=temperature_2m&models=ecmwf_ifs025,icon_seamless,gfs_seamless&timezone=auto&forecast_days=3')).json();
+    if(d!==D||!j.hourly) return;
+    const ks=Object.keys(j.hourly).filter(k=>k.startsWith('temperature_2m_')),idx=new Map(j.hourly.time.map((t,i)=>[t,i]));
+    d.band=d.hourly.time.map((t,i)=>{const k=idx.get(t);if(k==null)return null;
+      const v=ks.map(m=>j.hourly[m][k]).filter(x=>x!=null);v.push(d.hourly.temperature_2m[i]);return v.length<2?null:[Math.min(...v),Math.max(...v)]});
+    if(tab==='h') view();
+  }catch(e){}
+}
+function sunIcon(x,y,up,lab,W2){
+  const col=up?'#ffd36e':'#ff9a62',end=x>W2-70;
+  const rays=[0,45,90,135,180,225,270,315].map(a=>'<line x1="0" y1="-10" x2="0" y2="-14" transform="rotate('+a+')"/>').join('');
+  return '<g transform="translate('+x.toFixed(1)+' '+y+')"><g clip-path="url(#hz)"><g class="'+(up?'sunA':'sunB')+'">'
+   +'<circle class="halo" r="12" fill="'+col+'"/><circle r="6.5" fill="'+col+'"/><g class="rays" stroke="'+col+'" stroke-width="2" stroke-linecap="round">'+rays+'</g></g></g>'
+   +'<line x1="-15" x2="15" y1="1" y2="1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/>'
+   +'<text x="'+(end?-19:19)+'" y="4" font-size="11" fill="var(--mut)" text-anchor="'+(end?'end':'start')+'">'+lab+'</text></g>';
+}
+let sel=0,G=null,dsel=0,DG=null;
+const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
+function vHours(){
+  const h=D.hourly,i0=nowIdx(),n=24,t=h.temperature_2m.slice(i0,i0+n);
+  const W2=Math.max(300,Math.round($('v').clientWidth)||480),H=210,px=22,pt=36,pb=26;
+  const bd=D.band?D.band.slice(i0,i0+n):null,bv=bd?bd.filter(Boolean).flat():[],today=D.current.time.slice(0,10);
+  const mn=Math.min(...t,...bv),mx=Math.max(...t,...bv),rg=(mx-mn)||1;
+  const X=i=>px+i*(W2-2*px)/(n-1),Y=v=>pt+(1-(v-mn)/rg)*(H-pt-pb);
+  const line=t.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join('');
+  const area=line+'L'+X(n-1)+' '+(H-pb)+'L'+X(0)+' '+(H-pb)+'Z';
+  const step=W2>720?2:3;let lab='',cells='';
+  for(let i=0;i<n;i+=step) lab+='<text class="tl" data-i="'+i+'" x="'+X(i).toFixed(1)+'" y="'+(Y(t[i])-12).toFixed(1)+'" font-size="12" text-anchor="middle" fill="var(--ink)">'+r(t[i])+'°</text>'
+    +'<text x="'+X(i).toFixed(1)+'" y="'+(H-7)+'" font-size="11" text-anchor="middle" fill="var(--mut)">'+h.time[i0+i].slice(11,13)+'</text>';
+  for(let i=0;i<n;i++){const j=i0+i;
+    cells+='<div><span>'+h.time[j].slice(11,13)+'</span><span class="e">'+wi(h.weather_code[j])[0]+'</span><b>'+r(h.temperature_2m[j])+'°</b></div>'}
+  let band='',nt='';
+  if(bd&&bd.every(Boolean)) band='<path d="'+bd.map((b,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(b[1]).toFixed(1)).join('')+bd.map((b,i)=>'L'+X(n-1-i).toFixed(1)+' '+Y(bd[n-1-i][0]).toFixed(1)).join('')+'Z" fill="#fff" fill-opacity=".2"/>';
+  const cw=(W2-2*px)/(n-1);
+  for(let i=0;i<n;i++){const ts=h.time[i0+i],dk=D.daily.time.indexOf(ts.slice(0,10)),hh=+ts.slice(11,13);
+    if(dk>=0){const sr=Math.round(clock(D.daily.sunrise[dk].slice(11))),ss=Math.round(clock(D.daily.sunset[dk].slice(11)));
+      if(hh===sr||hh===ss) nt+='<line x1="'+X(i).toFixed(1)+'" x2="'+X(i).toFixed(1)+'" y1="'+(pt-2)+'" y2="'+(H-pb)+'" stroke="var(--mut)" stroke-opacity=".3" stroke-dasharray="2 5"/>'+sunIcon(X(i),pt-6,hh===sr,(hh===sr?D.daily.sunrise[dk]:D.daily.sunset[dk]).slice(11),W2);}}
+  const good=[];
+  for(let i=0;i<n;i++){const j=i0+i,ts=h.time[j],dk=D.daily.time.indexOf(ts.slice(0,10)),hh=+ts.slice(11,13);
+    good.push(dk>=0&&hh>=clock(D.daily.sunrise[dk].slice(11))&&hh<=clock(D.daily.sunset[dk].slice(11))&&(h.precipitation_probability[j]||0)<25&&h.weather_code[j]<51&&h.wind_speed_10m[j]<8)}
+  let bs=-1,bl=0,cs=-1;
+  for(let i=0;i<=n;i++){if(i<n&&good[i]){if(cs<0)cs=i}else if(cs>=0){if(i-cs>bl){bl=i-cs;bs=cs}cs=-1}}
+  let win='<div class="note" style="font-size:14px;color:var(--ink)">Сухих і спокійних годин при світлі найближчим часом немає.</div>';
+  if(bl>=2){const a=i0+bs,b=i0+bs+bl-1,ws=h.wind_speed_10m.slice(a,b+1),tt=h.temperature_2m.slice(a,b+1);
+    win='<div style="font-size:18px;font-weight:600">'+(h.time[a].slice(0,10)===today?'':'Завтра, ')+h.time[a].slice(11,13)+':00–'+p2(+h.time[b].slice(11,13)+1)+':00</div><div class="note" style="font-size:14px;margin-top:2px">'+r(Math.min(...tt))+'–'+r(Math.max(...tt))+'°, без опадів, вітер до '+r(Math.max(...ws))+' м/с</div>'}
+  G={W2,px,n,X,Y,t,i0,H,pb,pt};
+  return '<div class="glass"><div class="hint">Проведіть по графіку, щоб побачити погоду на вибрану годину</div><div class="rd" id="rd"></div>'
+   +'<svg id="ch" viewBox="0 0 '+W2+' '+H+'" tabindex="0" role="slider" aria-label="Година прогнозу" aria-valuemin="0" aria-valuemax="23">'
+   +'<defs><clipPath id="hz"><rect x="-18" y="-20" width="36" height="20"/></clipPath><linearGradient id="ng" x1="0" x2="1"><stop offset="0" stop-color="#6ff0ff"/><stop offset=".55" stop-color="#c9b8ff"/><stop offset="1" stop-color="#ff9de6"/></linearGradient>'
+   +'<linearGradient id="na" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+   +'<filter id="gl" x="-10%" y="-40%" width="120%" height="180%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>'
+   +nt+band+'<path d="'+area+'" fill="url(#na)"/>'
+   +'<line id="gd" y1="'+(pt-14)+'" y2="'+(H-pb)+'" stroke="var(--mut)" stroke-opacity=".45" stroke-dasharray="3 4"/>'
+   +'<path d="'+line+'" fill="none" stroke="url(#ng)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" filter="url(#gl)"/>'+lab
+   +'<g id="mk"><circle id="mkr" class="ring" r="14" fill="#ffd36e"/><circle r="15" fill="rgba(255,255,255,.92)" filter="url(#gl)"/><text id="mkg" y="6" font-size="19" text-anchor="middle">☀️</text></g></svg></div>'
+   +'<div class="glass" style="margin-top:12px"><div class="grid">'+cells+'</div></div>'
+   +'<div class="glass" style="margin-top:12px"><div class="hint">Найкраще вікно для прогулянки</div>'+win+'</div><div class="note">Світла смуга навколо лінії показує розбіжність моделей: чим вона ширша, тим менше можна довіряти прогнозу. Пунктир із 🌅 і 🌇 показує схід і захід сонця. Схід сонця '+D.daily.sunrise[0].slice(11)+', захід '+D.daily.sunset[0].slice(11)+'.</div>';
+}
+function scrub(){
+  const svg=$('ch'),g=G,h=D.hourly,today=D.current.time.slice(0,10);
+  const set=i=>{
+    sel=Math.max(0,Math.min(g.n-1,i));const j=g.i0+sel,x=g.X(sel),y=g.Y(g.t[sel]),dt=h.time[j],[em,tx]=wi(h.weather_code[j]);
+    $('mk').setAttribute('transform','translate('+x.toFixed(1)+' '+y.toFixed(1)+')');
+    $('gd').setAttribute('x1',x);$('gd').setAttribute('x2',x);svg.setAttribute('aria-valuenow',sel);
+    $('rd').innerHTML='<span class="re">'+em+'</span><span class="rt">'+r(h.temperature_2m[j])+'°</span><span class="rx"><b>'+(dt.slice(0,10)===today?'Сьогодні':'Завтра')+'<em>'+dt.slice(11)+'</em></b><span class="dt">'+new Date(dt.slice(0,10)+'T12:00').toLocaleDateString('uk',{weekday:'long',day:'numeric',month:'long'})+'</span>'+tx
+      +'<br>Відчувається як '+r(h.apparent_temperature[j])+'°, вітер '+r(h.wind_speed_10m[j])+' м/с, опади '+(h.precipitation_probability[j]||0)+'%</span>';
+    document.querySelectorAll('.grid>div').forEach((c,k)=>c.classList.toggle('on',k===sel));
+    const dk=D.daily.time.indexOf(dt.slice(0,10)),hr=+dt.slice(11,13),sr=dk<0?7:clock(D.daily.sunrise[dk].slice(11)),ss=dk<0?19:clock(D.daily.sunset[dk].slice(11));
+    const nightSel=hr<sr||hr>ss;
+    document.body.className=skyCls(h.weather_code[j],nightSel,Math.abs(hr-sr)<=1||Math.abs(hr-ss)<=1).trim();
+    $('mkg').textContent=nightSel?'🌙':'☀️';$('mkr').setAttribute('fill',nightSel?'#bcd0ff':'#ffd36e');
+    document.querySelectorAll('.tl').forEach(t=>t.style.opacity=(+t.dataset.i===sel)?0:1);
+  };
+  const at=e=>{const b=svg.getBoundingClientRect();set(Math.round(((e.clientX-b.left)/b.width*g.W2-g.px)/((g.W2-2*g.px)/(g.n-1))))};
+  svg.onpointerdown=e=>{svg.setPointerCapture(e.pointerId);at(e)};
+  svg.onpointermove=e=>{if(e.buttons)at(e)};
+  svg.onkeydown=e=>{const k=e.key;if(k==='ArrowRight')set(sel+1);else if(k==='ArrowLeft')set(sel-1);else if(k==='Home')set(0);else if(k==='End')set(g.n-1);else return;e.preventDefault()};
+  document.querySelectorAll('.grid>div').forEach((c,k)=>c.onclick=()=>set(k));
+  set(sel);
+}
+let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(D&&(tab==='h'||tab==='d'))view()},150)});
+
+function smooth(p){
+  let d='M'+p[0][0].toFixed(1)+' '+p[0][1].toFixed(1);
+  for(let i=0;i<p.length-1;i++){const p0=p[i-1]||p[i],p1=p[i],p2=p[i+1],p3=p[i+2]||p2;
+    d+='C'+[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6,p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6,p2[0],p2[1]].map(v=>v.toFixed(1)).join(' ')}
+  return d}
+function vDays(){
+  const d=D.daily,n=d.time.length,W2=Math.max(280,Math.round($('v').clientWidth)-34),H=250,pt=48,pb=44,cw=W2/n;
+  const hi=d.temperature_2m_max,lo=d.temperature_2m_min,mn=Math.min(...lo)-1,mx=Math.max(...hi)+1;
+  const X=i=>(i+.5)*cw,Y=v=>pt+(1-(v-mn)/(mx-mn))*(H-pt-pb);
+  const pH=hi.map((v,i)=>[X(i),Y(v)]),pL=lo.map((v,i)=>[X(i),Y(v)]);
+  let dots='',lab='',cols='';
+  for(let i=0;i<n;i++){
+    dots+='<circle class="dd" data-i="'+i+'" cx="'+pH[i][0].toFixed(1)+'" cy="'+pH[i][1].toFixed(1)+'" r="4" fill="#fff" stroke="#ff8fe0" stroke-width="2"/>'
+      +'<circle class="dd" data-i="'+i+'" cx="'+pL[i][0].toFixed(1)+'" cy="'+pL[i][1].toFixed(1)+'" r="4" fill="#fff" stroke="#4df3ff" stroke-width="2"/>';
+    lab+='<text x="'+pH[i][0].toFixed(1)+'" y="'+(pH[i][1]-13).toFixed(1)+'" font-size="15" font-weight="600" text-anchor="middle" fill="#fff">'+r(hi[i])+'°</text>'
+      +'<text x="'+pL[i][0].toFixed(1)+'" y="'+(pL[i][1]+26).toFixed(1)+'" font-size="13" text-anchor="middle" fill="var(--mut)">'+r(lo[i])+'°</text>';
+    const dt=new Date(d.time[i]+'T12:00'),pr=+d.precipitation_sum[i];
+    cols+='<div class="dc"><span class="wd">'+(i?dt.toLocaleDateString('uk',{weekday:'short'}):'Зараз')+'</span><span class="dn">'+dt.getDate()+'</span><span class="e">'+wi(d.weather_code[i])[0]+'</span>'
+      +'<span class="pb"><i style="height:'+Math.round(Math.min(pr,10)/10*100)+'%"></i></span><span class="pm">'+(pr>=0.1?pr.toFixed(1)+' мм':'сухо')+'</span></div>'}
+  const band=smooth(pH)+smooth(pL.slice().reverse()).replace('M','L')+'Z';
+  DG={n,cw};
+  return '<div class="glass"><div class="hint">Торкніться дня або проведіть по графіку, щоб побачити подробиці</div><div class="rd" id="drd"></div>'
+   +'<svg id="dch" viewBox="0 0 '+W2+' '+H+'"><defs>'
+   +'<linearGradient id="gmax" x1="0" x2="1"><stop offset="0" stop-color="#ff5fd2"/><stop offset="1" stop-color="#ffb347"/></linearGradient>'
+   +'<linearGradient id="gmin" x1="0" x2="1"><stop offset="0" stop-color="#4df3ff"/><stop offset="1" stop-color="#8a7bff"/></linearGradient>'
+   +'<linearGradient id="gband" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8fe0" stop-opacity=".28"/><stop offset="1" stop-color="#4df3ff" stop-opacity=".2"/></linearGradient>'
+   +'<filter id="bl" x="-10%" y="-40%" width="120%" height="180%"><feGaussianBlur stdDeviation="5"/></filter></defs>'
+   +'<rect id="dh" y="'+(pt-32)+'" width="'+(cw-8).toFixed(1)+'" height="'+(H-pt-pb+64)+'" rx="16" fill="#fff" fill-opacity=".13"/>'
+   +'<path d="'+band+'" fill="url(#gband)"/>'
+   +'<path class="gl" d="'+smooth(pH)+'" fill="none" stroke="url(#gmax)" stroke-width="8" filter="url(#bl)"/><path d="'+smooth(pH)+'" fill="none" stroke="url(#gmax)" stroke-width="3.2" stroke-linecap="round"/>'
+   +'<path class="gl" d="'+smooth(pL)+'" fill="none" stroke="url(#gmin)" stroke-width="8" filter="url(#bl)"/><path d="'+smooth(pL)+'" fill="none" stroke="url(#gmin)" stroke-width="3.2" stroke-linecap="round"/>'
+   +dots+lab+'</svg><div class="dgrid">'+cols+'</div></div>';
+}
+function daysInit(){
+  const svg=$('dch'),g=DG,d=D.daily;
+  const set=i=>{
+    dsel=Math.max(0,Math.min(g.n-1,i));
+    $('dh').setAttribute('x',(dsel*g.cw+4).toFixed(1));
+    const dt=new Date(d.time[dsel]+'T12:00'),sr=d.sunrise[dsel].slice(11),ss=d.sunset[dsel].slice(11),len=clock(ss)-clock(sr),[em,tx]=wi(d.weather_code[dsel]);
+    $('drd').innerHTML='<span class="re">'+em+'</span><span class="rt">'+r(d.temperature_2m_max[dsel])+'°</span><span class="rx"><b>'+(dsel?cap(dt.toLocaleDateString('uk',{weekday:'long'})):'Сьогодні')
+      +'<em>'+dt.toLocaleDateString('uk',{day:'numeric',month:'long'})+'</em></b>'+tx+', вночі до '+r(d.temperature_2m_min[dsel])+'°<br>Опади '+(+d.precipitation_sum[dsel]).toFixed(1)
+      +' мм, світловий день '+Math.floor(len)+' год '+p2(Math.round((len%1)*60))+' хв ('+sr+'–'+ss+')</span>';
+    document.querySelectorAll('.dc').forEach((c,k)=>c.classList.toggle('on',k===dsel));
+    document.querySelectorAll('.dd').forEach(c=>c.setAttribute('r',+c.dataset.i===dsel?6.5:4));
+    document.body.className=skyCls(d.weather_code[dsel],false,false).trim();
+  };
+  const at=e=>{const b=svg.getBoundingClientRect();set(Math.floor((e.clientX-b.left)/b.width*g.n))};
+  svg.onpointerdown=e=>{svg.setPointerCapture(e.pointerId);at(e)};
+  svg.onpointermove=e=>{if(e.buttons)at(e)};
+  document.querySelectorAll('.dc').forEach((c,k)=>c.onclick=()=>set(k));
+  set(dsel);
+}
+
+function vSolar(){
+  const h=D.hourly,i0=nowIdx(),day=D.current.time.slice(0,10),PR=.8;
+  /* Open-Meteo: значення о HH:00 — середнє за ПОПЕРЕДНЮ годину, тож стовпчик показуємо як інтервал HH-1 … HH */
+  const idx=[];h.time.forEach((t,i)=>{if(t.startsWith(day)&&h.shortwave_radiation[i]>0)idx.push(i)});
+  const g=idx.map(i=>h.shortwave_radiation[i]),peak=Math.max(1,...g),dayKwh=g.reduce((a,b)=>a+b,0)/1000;
+  const W2=480,H=140,bw=idx.length?W2/idx.length:0;
+  const bars=idx.map((i,k)=>{const bh=g[k]/peak*(H-26),cur=i===i0;
+    return '<rect x="'+(k*bw+2).toFixed(1)+'" y="'+(H-20-bh).toFixed(1)+'" width="'+(bw-4).toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="3" fill="'+(cur?'var(--sun)':'#f5a52455')+'"/>'
+     +((k%2===0)?'<text x="'+(k*bw+bw/2).toFixed(1)+'" y="'+(H-5)+'" font-size="11" text-anchor="middle" fill="var(--mut)">'+(Number(h.time[i].slice(11,13))-1)+'</text>':'')}).join('');
+  const dl=D.daily.shortwave_radiation_sum.map(m=>m/3.6);
+  const dmax=Math.max(...dl,1);
+  const dayRows=D.daily.time.map((t,i)=>{const nm=i?new Date(t+'T12:00').toLocaleDateString('uk',{weekday:'short',day:'numeric'}):'Сьогодні';
+    return '<div class="day" style="grid-template-columns:78px 1fr 92px"><span>'+nm+'</span><div class="rng"><span style="left:0;right:'+(100-dl[i]/dmax*100)+'%;background:var(--sun)"></span></div><span class="t">'+r(dl[i]*kwp*PR)+' <small>кВт·год</small></span></div>'}).join('');
+  return '<div class="in"><label for="kwp">Потужність станції, кВт</label><input id="kwp" type="number" inputmode="decimal" min="0" value="'+kwp+'"></div>'
+   +'<div class="kp"><div><b>'+r(peak)+'</b>Вт/м² на піку</div><div><b>'+dayKwh.toFixed(1)+'</b>кВт·год/м² за день</div><div><b>'+r(dayKwh*kwp*PR)+'</b>кВт·год орієнтовно</div></div>'
+   +(idx.length?'<svg viewBox="0 0 '+W2+' '+H+'">'+bars+'</svg>':'<div class="err">Сьогодні сонячного випромінювання вже немає.</div>')
+   +'<h2>Орієнтовна генерація на тиждень</h2>'+dayRows
+   +'<div class="note">Оцінка: потужність × випромінювання × коефіцієнт 0,8. Реальна станція залежить від нахилу панелей, затінення і температури, тож це лише орієнтир.</div>';
+}
+
+/* пошук міста */
+let tm;
+$('q').addEventListener('input',e=>{
+  clearTimeout(tm);const v=e.target.value.trim();
+  if(v.length<2){$('sug').hidden=true;return}
+  tm=setTimeout(async()=>{
+    try{
+      const j=await (await fetch('https://geocoding-api.open-meteo.com/v1/search?count=6&language=uk&name='+encodeURIComponent(v))).json();
+      const s=$('sug');s.innerHTML='';
+      (j.results||[]).forEach(x=>{const d=document.createElement('div');
+        d.innerHTML=x.name+' <small>'+[x.admin1,x.country].filter(Boolean).join(', ')+'</small>';
+        d.onclick=()=>{place={name:x.name,country:x.country||'',lat:x.latitude,lon:x.longitude};s.hidden=true;$('q').value='';load()};s.appendChild(d)});
+      if(!s.children.length)s.innerHTML='<div>Нічого не знайдено</div>';
+      s.hidden=false;
+    }catch(_){}
+  },300);
+});
+document.addEventListener('click',e=>{if(!e.target.closest('.top'))$('sug').hidden=true});
+$('geo').onclick=()=>{
+  if(!navigator.geolocation){alert('Браузер не дає доступу до геолокації.');return}
+  navigator.geolocation.getCurrentPosition(p=>{place={name:'Моя локація',country:'',lat:p.coords.latitude,lon:p.coords.longitude};load()},()=>alert('Немає дозволу на геолокацію. Введіть місто вручну.'));
+};
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;view()});
+load();
+</script>
+</body>
+</html>
