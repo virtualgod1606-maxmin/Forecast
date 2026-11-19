@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#2f6fb3">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Погода">
 <title>Погода</title>
@@ -46,7 +49,7 @@ h2{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--mut)}
 #ch{touch-action:pan-y;cursor:ew-resize;outline-offset:4px;user-select:none}
 .ring{transform-box:fill-box;transform-origin:center;animation:pl 1.9s ease-out infinite}
 @keyframes pl{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.1);opacity:0}}
-@media (prefers-reduced-motion:reduce){.ring{animation:none;opacity:.35}.sunA,.sunB,.rays,.halo,.gl{animation:none}}
+@media (prefers-reduced-motion:reduce){.ring{animation:none;opacity:.35}.sunA,.sunB,.rays,.halo,.gl,.fl,.pu,.dr,.sn,.bolt,.tw,.fg{animation:none}}
 .sunA{animation:rise 3.6s cubic-bezier(.3,.7,.3,1) infinite}.sunB{animation:sink 3.6s cubic-bezier(.5,0,.7,.4) infinite}
 @keyframes rise{0%{transform:translateY(10px)}60%,100%{transform:translateY(-1px)}}
 @keyframes sink{0%,40%{transform:translateY(-1px)}100%{transform:translateY(11px)}}
@@ -69,13 +72,46 @@ h2{font-size:15px;font-weight:600;margin:22px 0 8px;color:var(--mut)}
 .tm{display:flex;justify-content:space-between;align-items:baseline;margin:2px 0 4px}
 .tm b{font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;font-size:22px}.tm span{font-size:13px;color:var(--mut)}
 input[type=range]{width:100%;accent-color:#ffd36e;height:30px}
-.kv{display:flex;gap:14px;align-items:center;margin-bottom:12px}.ke{font-size:56px;line-height:1}
+.kv{display:flex;gap:14px;align-items:center;margin-bottom:12px}.kv .ke{font-size:56px;line-height:1;color:inherit}
 .kv b{display:block;font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;font-size:25px}.kv span{color:var(--mut);font-size:14px}
 .ki{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .ki>div{background:rgba(255,255,255,.12);border-radius:16px;padding:10px 12px;display:flex;gap:10px;align-items:center}
 .ie{font-size:28px}.ki small{display:block;color:var(--mut);font-size:11px}.ki b{font-size:14px;font-weight:600;line-height:1.3}
 .st{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.st span{background:rgba(255,255,255,.14);border-radius:12px;padding:5px 10px;font-size:13px}
 .tp{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.4}.tp:first-child{border:0}
+.pill{display:inline-flex;gap:8px;align-items:center;margin-top:12px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);font-size:14px;border:1px solid rgba(255,255,255,.28)}
+.pill.rain{box-shadow:0 0 18px rgba(77,243,255,.45);border-color:rgba(77,243,255,.6)}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px}
+.fl{animation:fl 3.2s ease-in-out infinite}@keyframes fl{0%,100%{transform:translateX(-1.3px)}50%{transform:translateX(1.3px)}}
+.pu{transform-box:fill-box;transform-origin:center;animation:pu 2.4s ease-in-out infinite}@keyframes pu{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.dr{animation:dr 1s linear infinite}@keyframes dr{0%{transform:translateY(-2px);opacity:0}25%{opacity:1}100%{transform:translateY(5px);opacity:0}}
+.sn{animation:sn 2.4s linear infinite}@keyframes sn{0%{transform:translate(-1px,-2px);opacity:0}20%{opacity:1}100%{transform:translate(2px,7px);opacity:0}}
+.bolt{animation:bolt 2.4s infinite}@keyframes bolt{0%,55%,100%{opacity:.15}60%,70%{opacity:1}65%{opacity:.3}}
+.tw{animation:tw 2s ease-in-out infinite}@keyframes tw{0%,100%{opacity:.25}50%{opacity:1}}
+.fg{animation:fg 2.6s ease-in-out infinite}@keyframes fg{0%,100%{transform:translateX(-2px)}50%{transform:translateX(2px)}}
+.al{display:flex;gap:8px;align-items:center;margin-top:10px;padding:9px 14px;border-radius:14px;background:rgba(0,0,0,.22);border-left:4px solid var(--c);font-size:14px;line-height:1.35}
+.dwrap{position:relative;margin-top:6px}
+.hl{position:absolute;top:0;bottom:0;left:0;width:calc(100%/7);border-radius:20px;background:rgba(255,255,255,.2);box-shadow:0 0 24px rgba(255,255,255,.15);transition:left .28s cubic-bezier(.3,.8,.3,1);pointer-events:none}
+.dwrap>.dgrid,.dwrap>svg{position:relative}
+.dc.on{background:none}
+.dc{display:flex;flex-direction:column;align-items:center;padding:8px 0 4px}
+.dc .tdl{font-size:9.5px;color:var(--sun);line-height:1;margin-top:1px}
+.di{width:36px;height:36px;margin:4px 0}
+.ds{font-size:11px;color:var(--mut);margin-bottom:4px}
+.dh1{font-size:17px}.dl{font-size:13px;color:var(--mut);margin-bottom:6px}
+@media (min-width:700px){.di{width:48px;height:48px}.ds{font-size:13px}.dh1{font-size:20px}}
+.rt small{font-size:24px;color:var(--mut);margin-left:2px}.ri{width:62px;height:62px;flex:none}
+.tg{font-family:-apple-system,"Segoe UI",sans-serif;font-style:normal;font-size:11px;font-weight:600;background:#ffd36e;color:#3a2a00;border-radius:8px;padding:2px 7px;margin-left:10px;vertical-align:middle}
+.rx .ds2{display:block;font-size:17px;color:var(--ink);margin:2px 0}
+@media (max-width:480px){
+.glass{padding:14px 12px 10px;border-radius:20px}
+#drd{flex-wrap:wrap;gap:6px 12px}
+#drd .rx{flex:1 1 100%;min-width:0}
+#drd .rx b em{display:block;margin:2px 0 0}
+#drd .rt{font-size:38px}#drd .rt small{font-size:20px}#drd .ri{width:52px;height:52px}
+#drd .st span{font-size:12px;padding:4px 8px}
+#drd .ds2{font-size:16px}
+}
 .halo{animation:halo 3.6s ease-in-out infinite}@keyframes halo{0%,100%{opacity:.14}60%{opacity:.42}}
 .grid{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;text-align:center;font-size:11px;color:var(--mut);margin-top:8px}
 @media (max-width:700px){.grid{grid-template-columns:repeat(12,1fr)}}
@@ -128,16 +164,21 @@ let kwp=Number(localStorage.getItem('kwp'))||100;
 let D=null,tab='h';
 
 async function load(){
+  AQ=null;
   $('now').innerHTML='<div class="city">'+place.name+'</div><div class="desc" style="margin-top:20px">Завантаження…</div>';
   const u='https://api.open-meteo.com/v1/forecast?latitude='+place.lat+'&longitude='+place.lon
    +'&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day'
-   +'&hourly=temperature_2m,precipitation_probability,weather_code,shortwave_radiation,apparent_temperature,wind_speed_10m,relative_humidity_2m,uv_index'
+   +'&hourly=temperature_2m,precipitation_probability,weather_code,shortwave_radiation,apparent_temperature,wind_speed_10m,relative_humidity_2m,uv_index,wind_gusts_10m'
    +'&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,shortwave_radiation_sum,sunrise,sunset'
    +'&wind_speed_unit=ms&timezone=auto&forecast_days=7';
   try{
     const res=await fetch(u); if(!res.ok) throw 0;
-    D=await res.json(); localStorage.setItem('place',JSON.stringify(place)); draw(); fetchBand();
+    D=await res.json(); localStorage.setItem('place',JSON.stringify(place));
+    try{localStorage.setItem('cache',JSON.stringify({k:place.lat+','+place.lon,t:Date.now(),D}))}catch(_){}
+    $('fail').style.display='none'; draw(); fetchBand(); extras();
   }catch(e){
+    let c=null;try{c=JSON.parse(localStorage.getItem('cache')||'null')}catch(_){}
+    if(c&&c.k===place.lat+','+place.lon){D=c.D;draw();const f=$('fail');f.style.display='block';f.textContent='Немає зв’язку. Показано збережений прогноз від '+new Date(c.t).toLocaleString('uk',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'.';return}
     $('now').innerHTML='<div class="city">'+place.name+'</div>';
     $('v').innerHTML='<div class="err">Не вдалося отримати прогноз. Перевірте інтернет і спробуйте ще раз.</div>';
   }
@@ -148,8 +189,8 @@ function draw(){sel=0;dsel=0;
   document.body.className=skyCls(c.weather_code,!c.is_day,false).trim();
   $('now').innerHTML='<div class="city">'+place.name+(place.country?', '+place.country:'')+'</div>'
    +'<div class="temp">'+r(c.temperature_2m)+'°</div><div class="desc">'+em+' '+tx+'</div>'
-   +'<div class="meta"><span>Відчувається як '+r(c.apparent_temperature)+'°</span><span>Вітер '+r(c.wind_speed_10m)+' м/с</span><span>Вологість '+c.relative_humidity_2m+'%</span></div>';
-  view();
+   +'<div class="meta"><span>Відчувається як '+r(c.apparent_temperature)+'°</span><span>Вітер '+r(c.wind_speed_10m)+' м/с</span><span>Вологість '+c.relative_humidity_2m+'%</span></div><div id="xt"></div>';
+  view(); alerts();
 }
 
 function nowIdx(){const p=D.current.time.slice(0,13)+':00';const i=D.hourly.time.indexOf(p);return i<0?0:i}
@@ -165,10 +206,103 @@ function view(){
   const k=$('kwp'); if(k) k.oninput=()=>{kwp=Math.max(0,Number(k.value)||0);localStorage.setItem('kwp',kwp);$('v').innerHTML='<div class="glass">'+vSolar()+'</div>';$('kwp').focus();const e=$('kwp');e.setSelectionRange(e.value.length,e.value.length)};
 }
 
+function cloudSvg(f,tr){return '<g transform="'+tr+'"><g class="fl"><g fill="'+f+'"><circle cx="-4.5" cy="1.5" r="4.6"/><circle cx="1" cy="-1.5" r="5.6"/><circle cx="6.5" cy="2" r="4"/><rect x="-9" y="1.5" width="19" height="5.2" rx="2.6"/></g></g></g>'}
+function sunSvg(tr){const l=[0,45,90,135,180,225,270,315].map(a=>'<line x1="0" y1="-8" x2="0" y2="-11" transform="rotate('+a+')"/>').join('');
+  return '<g transform="'+tr+'"><g class="pu"><circle r="5.5" fill="#ffb020"/></g><g class="rays" stroke="#ffb020" stroke-width="1.8" stroke-linecap="round">'+l+'</g></g>'}
+function moonSvg(tr){return '<g transform="'+tr+'"><g class="fl"><circle r="8" fill="#8c98e8" mask="url(#mm)"/></g></g>'}
+function ringCol(c,n){return c>=95?'#ffd22e':(c>=71&&c<=77)||c===85||c===86?'#bfe3ff':c>=51?'#4da3ff':c===3||c===45||c===48?'#c6d4e8':n?'#bcd0ff':'#ffd36e'}
+function wxIcon(c,n){
+  const drops=[-4,1,6].map((x,i)=>'<line class="dr" style="animation-delay:'+(i*.33)+'s" x1="'+x+'" y1="5" x2="'+(x-1)+'" y2="8.5" stroke="#3a8fe0" stroke-width="1.8" stroke-linecap="round"/>').join('');
+  const flakes=[-4,1,6].map((x,i)=>'<circle class="sn" style="animation-delay:'+(i*.8)+'s" cx="'+x+'" cy="5" r="1.4" fill="#6fb0ea"/>').join('');
+  if(c>=95) return cloudSvg('#5f6f92','translate(0 -4)')+'<path class="bolt" d="M1 2 L-3 7.5 L0 7.5 L-1.2 12.5 L3.8 6 L1 6 Z" fill="#ffd22e" stroke="#e0a800" stroke-width=".4"/>';
+  if((c>=71&&c<=77)||c===85||c===86) return cloudSvg('#9fb3d1','translate(0 -4)')+flakes;
+  if(c>=51) return cloudSvg('#7f93b4','translate(0 -4)')+drops;
+  if(c===45||c===48) return cloudSvg('#b3c6e0','translate(0 -5)')+[6.5,9.5,12].map((y,i)=>'<line class="fg" style="animation-delay:'+(i*.5)+'s" x1="-7" y1="'+y+'" x2="7" y2="'+y+'" stroke="#9db4d1" stroke-width="1.6" stroke-linecap="round"/>').join('');
+  if(c===3) return cloudSvg('#c6d4e8','translate(5 -5) scale(.65)')+cloudSvg('#9fb3d1','translate(-1 2)');
+  if(c===2) return (n?moonSvg('translate(-3 -3) scale(.8)'):sunSvg('translate(-4 -4) scale(.75)'))+cloudSvg('#b3c6e0','translate(2 3) scale(.85)');
+  return n?moonSvg('translate(0 0)')+'<circle class="tw" cx="8" cy="-7" r="1.1" fill="#8c98e8"/><circle class="tw" style="animation-delay:.9s" cx="9.5" cy="3" r=".9" fill="#8c98e8"/>':sunSvg('translate(0 0)');
+}
 function skyCls(code,night,dusk){return night?' night':code>=51?' rain':[3,45,48].includes(code)?' cloud':dusk?' dusk':''}
 function clock(x){const a=x.split(':');return +a[0]+ +a[1]/60}
 const p2=n=>(n<10?'0':'')+n;
+function alerts(){
+  if(!D||!$('xt')) return;
+  const h=D.hourly,i0=nowIdx(),today=D.current.time.slice(0,10),end=Math.min(h.time.length,i0+24),out=[];
+  const when=j=>(h.time[j].slice(0,10)===today?'о ':'завтра о ')+h.time[j].slice(11,13)+':00';
+  let minT=1e9,minJ=0,maxT=-1e9,maxJ=0,maxG=0,gJ=0,th=-1,hv=-1,sn=-1,fr=-1;
+  for(let j=i0;j<end;j++){
+    const t=h.temperature_2m[j],g=h.wind_gusts_10m?h.wind_gusts_10m[j]||0:0,c=h.weather_code[j];
+    if(t<minT){minT=t;minJ=j} if(t>maxT){maxT=t;maxJ=j} if(g>maxG){maxG=g;gJ=j}
+    if(c>=95&&th<0)th=j; if((c===65||c===82)&&hv<0)hv=j; if((c===75||c===86)&&sn<0)sn=j; if([56,57,66,67].includes(c)&&fr<0)fr=j;
+  }
+  if(minT<=0) out.push([minT<=-15?3:minT<=-5?2:1,minT<=-5?'🥶':'❄️',(minT<=-5?'Мороз':'Заморозки')+' до '+r(minT)+'°, '+when(minJ)]);
+  if(maxT>=30) out.push([maxT>=35?3:2,'🥵','Спека до '+r(maxT)+'°, '+when(maxJ)]);
+  if(maxG>=15) out.push([maxG>=25?3:maxG>=20?2:1,'💨','Сильні пориви вітру до '+r(maxG)+' м/с, '+when(gJ)]);
+  if(th>=0) out.push([2,'⛈️','Гроза, '+when(th)]);
+  if(hv>=0) out.push([1,'🌧️','Сильний дощ, '+when(hv)]);
+  if(sn>=0) out.push([2,'🌨️','Сильний снігопад, '+when(sn)]);
+  if(fr>=0) out.push([3,'🧊','Ожеледиця: крижаний дощ, '+when(fr)]);
+  out.sort((a,b)=>b[0]-a[0]);
+  let w=$('wa');if(!w){$('xt').insertAdjacentHTML('afterbegin','<div id="wa"></div>');w=$('wa')}
+  w.innerHTML=out.slice(0,3).map(x=>'<div class="al" style="--c:'+['','#ffd36e','#ff9a62','#ff6b6b'][x[0]]+'"><span>'+x[1]+'</span><span>'+x[2]+'</span></div>').join('');
+}
+const msOf=t=>Date.parse(t+':00Z');
+const hm=t=>t.slice(11,16);
+const dur=m=>m<60?m+' хв':Math.floor(m/60)+' год'+(m%60?' '+(m%60)+' хв':'');
+async function extras(){
+  const d=D,q='latitude='+place.lat+'&longitude='+place.lon+'&timezone=auto';
+  try{
+    const j=await (await fetch('https://api.open-meteo.com/v1/forecast?'+q+'&minutely_15=precipitation&forecast_days=2')).json();
+    if(d!==D||!j.minutely_15) return;
+    const cur=msOf(d.current.time),T=j.minutely_15.time,P=j.minutely_15.precipitation,xs=[];
+    for(let i=0;i<T.length&&xs.length<16;i++) if(msOf(T[i])>cur) xs.push([T[i],P[i]||0]);
+    if(!xs.length) return;
+    const wet=x=>x[1]>=0.1;let txt,rain=true;
+    if(wet(xs[0])){
+      let k=0;while(k<xs.length&&wet(xs[k]))k++;
+      txt=k>=xs.length?'🌧️ Дощ іде і триватиме щонайменше 4 години':'🌧️ Дощ іде, закінчиться близько '+hm(xs[k-1][0]);
+    }else{
+      const k=xs.findIndex(wet);
+      if(k>0){const m=Math.max(1,Math.round((msOf(xs[k-1][0])-cur)/60000));txt='☔ Дощ почнеться близько '+hm(xs[k-1][0])+', за '+dur(m);}
+      else{txt='🌤️ Найближчі 4 години без опадів';rain=false}
+    }
+    const o=$('nc');if(o)o.remove();
+    $('xt').insertAdjacentHTML('beforeend','<div class="pill'+(rain?' rain':'')+'" id="nc">'+txt+'</div>');
+  }catch(e){}
+  try{
+    const j=await (await fetch('https://air-quality-api.open-meteo.com/v1/air-quality?'+q+'&current=european_aqi')).json();
+    if(d!==D||!j.current||j.current.european_aqi==null) return;
+    const a=Math.round(j.current.european_aqi),L=a<=20?['добре','#4ade80']:a<=40?['прийнятне','#a3e635']:a<=60?['помірне','#facc15']:a<=80?['погане','#fb923c']:a<=100?['дуже погане','#f87171']:['небезпечне','#c084fc'];
+    AQ={aqi:a};
+    const m=document.querySelector('.meta');
+    if(m) m.insertAdjacentHTML('beforeend','<span><i class="dot" style="background:'+L[1]+'"></i>Повітря: '+L[0]+' ('+a+')</span>');
+    if(tab==='k'&&$('kr')) kidsFill();
+  }catch(e){}
+}
 async function fetchBand(){
+  const d=D;
+  try{
+    const j=await (await fetch('https://api.open-meteo.com/v1/forecast?latitude='+place.lat+'&longitude='+place.lon+'&hourly=temperature_2m,apparent_temperature,wind_speed_10m,wind_gusts_10m,precipitation&models=ecmwf_ifs025,icon_seamless,gfs_seamless&wind_speed_unit=ms&timezone=auto&forecast_days=7')).json();
+    if(d!==D||!j.hourly) return;
+    const H=d.hourly,idx=new Map(j.hourly.time.map((t,i)=>[t,i])),ks=v=>Object.keys(j.hourly).filter(k=>k.startsWith(v+'_'));
+    const K={t:ks('temperature_2m'),a:ks('apparent_temperature'),w:ks('wind_speed_10m'),g:ks('wind_gusts_10m'),p:ks('precipitation')};
+    const vals=(m,k)=>m.map(x=>j.hourly[x][k]).filter(v=>v!=null),mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
+    d.band=[];
+    H.time.forEach((t,i)=>{
+      const k=idx.get(t);if(k==null){d.band.push(null);return}
+      const T=vals(K.t,k),A=vals(K.a,k),Wd=vals(K.w,k),G=vals(K.g,k),P=vals(K.p,k);
+      d.band.push(T.length>=2?[Math.min(...T,H.temperature_2m[i]),Math.max(...T,H.temperature_2m[i])]:null);
+      if(T.length>=2) H.temperature_2m[i]=mean(T);
+      if(A.length>=2) H.apparent_temperature[i]=mean(A);
+      if(Wd.length>=2) H.wind_speed_10m[i]=mean(Wd);
+      if(G.length>=2&&H.wind_gusts_10m) H.wind_gusts_10m[i]=mean(G);
+      if(P.length>=2){const ag=P.filter(v=>v>=0.1).length/P.length*100,b=H.precipitation_probability[i];H.precipitation_probability[i]=Math.round(b==null?ag:(b+ag)/2)}
+    });
+    d.daily.time.forEach((day,di)=>{const ts=H.temperature_2m.filter((v,i)=>H.time[i].startsWith(day));if(ts.length>=20){d.daily.temperature_2m_max[di]=Math.max(...ts);d.daily.temperature_2m_min[di]=Math.min(...ts)}});
+    d.blend=true;view();alerts();
+  }catch(e){}
+}
+async function fetchBandOld(){
   const d=D;
   try{
     const j=await (await fetch('https://api.open-meteo.com/v1/forecast?latitude='+place.lat+'&longitude='+place.lon+'&hourly=temperature_2m&models=ecmwf_ifs025,icon_seamless,gfs_seamless&timezone=auto&forecast_days=3')).json();
@@ -187,7 +321,7 @@ function sunIcon(x,y,up,lab,W2){
    +'<line x1="-15" x2="15" y1="1" y2="1" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/>'
    +'<text x="'+(end?-19:19)+'" y="4" font-size="11" fill="var(--mut)" text-anchor="'+(end?'end':'start')+'">'+lab+'</text></g>';
 }
-let sel=0,G=null,dsel=0,DG=null;
+let sel=0,G=null,dsel=0,DG=null,AQ=null;
 const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
 function vHours(){
   const h=D.hourly,i0=nowIdx(),n=24,t=h.temperature_2m.slice(i0,i0+n);
@@ -219,15 +353,15 @@ function vHours(){
   G={W2,px,n,X,Y,t,i0,H,pb,pt};
   return '<div class="glass"><div class="hint">Проведіть по графіку, щоб побачити погоду на вибрану годину</div><div class="rd" id="rd"></div>'
    +'<svg id="ch" viewBox="0 0 '+W2+' '+H+'" tabindex="0" role="slider" aria-label="Година прогнозу" aria-valuemin="0" aria-valuemax="23">'
-   +'<defs><clipPath id="hz"><rect x="-18" y="-20" width="36" height="20"/></clipPath><linearGradient id="ng" x1="0" x2="1"><stop offset="0" stop-color="#6ff0ff"/><stop offset=".55" stop-color="#c9b8ff"/><stop offset="1" stop-color="#ff9de6"/></linearGradient>'
+   +'<defs><mask id="mm"><rect x="-12" y="-12" width="24" height="24" fill="#fff"/><circle cx="5" cy="-3" r="7.5" fill="#000"/></mask><clipPath id="hz"><rect x="-18" y="-20" width="36" height="20"/></clipPath><linearGradient id="ng" x1="0" x2="1"><stop offset="0" stop-color="#6ff0ff"/><stop offset=".55" stop-color="#c9b8ff"/><stop offset="1" stop-color="#ff9de6"/></linearGradient>'
    +'<linearGradient id="na" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
    +'<filter id="gl" x="-10%" y="-40%" width="120%" height="180%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>'
    +nt+band+'<path d="'+area+'" fill="url(#na)"/>'
    +'<line id="gd" y1="'+(pt-14)+'" y2="'+(H-pb)+'" stroke="var(--mut)" stroke-opacity=".45" stroke-dasharray="3 4"/>'
    +'<path d="'+line+'" fill="none" stroke="url(#ng)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" filter="url(#gl)"/>'+lab
-   +'<g id="mk"><circle id="mkr" class="ring" r="14" fill="#ffd36e"/><circle r="15" fill="rgba(255,255,255,.92)" filter="url(#gl)"/><text id="mkg" y="6" font-size="19" text-anchor="middle">☀️</text></g></svg></div>'
+   +'<g id="mk"><circle id="mkr" class="ring" r="14" fill="#ffd36e"/><circle r="15" fill="rgba(255,255,255,.92)" filter="url(#gl)"/><g id="mki"></g></g></svg></div>'
    +'<div class="glass" style="margin-top:12px"><div class="grid">'+cells+'</div></div>'
-   +'<div class="glass" style="margin-top:12px"><div class="hint">Найкраще вікно для прогулянки</div>'+win+'</div><div class="note">Світла смуга навколо лінії показує розбіжність моделей: чим вона ширша, тим менше можна довіряти прогнозу. Пунктир із 🌅 і 🌇 показує схід і захід сонця. Схід сонця '+D.daily.sunrise[0].slice(11)+', захід '+D.daily.sunset[0].slice(11)+'.</div>';
+   +'<div class="glass" style="margin-top:12px"><div class="hint">Найкраще вікно для прогулянки</div>'+win+'</div><div class="note">Світла смуга навколо лінії показує розбіжність моделей: чим вона ширша, тим менше можна довіряти прогнозу. Пунктир із 🌅 і 🌇 показує схід і захід сонця.'+(D.blend?' Температура, вітер і ймовірність опадів усереднені за трьома моделями (ECMWF, ICON, GFS).':'')+' Схід сонця '+D.daily.sunrise[0].slice(11)+', захід '+D.daily.sunset[0].slice(11)+'.</div>';
 }
 function scrub(){
   const svg=$('ch'),g=G,h=D.hourly,today=D.current.time.slice(0,10);
@@ -241,7 +375,7 @@ function scrub(){
     const dk=D.daily.time.indexOf(dt.slice(0,10)),hr=+dt.slice(11,13),sr=dk<0?7:clock(D.daily.sunrise[dk].slice(11)),ss=dk<0?19:clock(D.daily.sunset[dk].slice(11));
     const nightSel=hr<sr||hr>ss;
     document.body.className=skyCls(h.weather_code[j],nightSel,Math.abs(hr-sr)<=1||Math.abs(hr-ss)<=1).trim();
-    $('mkg').textContent=nightSel?'🌙':'☀️';$('mkr').setAttribute('fill',nightSel?'#bcd0ff':'#ffd36e');
+    $('mki').innerHTML=wxIcon(h.weather_code[j],nightSel);$('mkr').setAttribute('fill',ringCol(h.weather_code[j],nightSel));
     document.querySelectorAll('.tl').forEach(t=>t.style.opacity=(+t.dataset.i===sel)?0:1);
   };
   const at=e=>{const b=svg.getBoundingClientRect();set(Math.round(((e.clientX-b.left)/b.width*g.W2-g.px)/((g.W2-2*g.px)/(g.n-1))))};
@@ -258,8 +392,9 @@ function smooth(p){
   for(let i=0;i<p.length-1;i++){const p0=p[i-1]||p[i],p1=p[i],p2=p[i+1],p3=p[i+2]||p2;
     d+='C'+[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6,p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6,p2[0],p2[1]].map(v=>v.toFixed(1)).join(' ')}
   return d}
+const WS=c=>c<=1?'Ясно':c===2?'Мінливо':c===3?'Хмарно':c<=48?'Туман':c<=57?'Мряка':c<=67?'Дощ':c<=77?'Сніг':c<=82?'Злива':c<=86?'Сніг':'Гроза';
 function vDays(){
-  const d=D.daily,n=d.time.length,W2=Math.max(280,Math.round($('v').clientWidth)-34),H=250,pt=48,pb=44,cw=W2/n;
+  const d=D.daily,n=d.time.length,W2=Math.max(280,Math.round($('v').clientWidth)-34),H=190,pt=30,pb=30,cw=W2/n;
   const hi=d.temperature_2m_max,lo=d.temperature_2m_min,mn=Math.min(...lo)-1,mx=Math.max(...hi)+1;
   const X=i=>(i+.5)*cw,Y=v=>pt+(1-(v-mn)/(mx-mn))*(H-pt-pb);
   const pH=hi.map((v,i)=>[X(i),Y(v)]),pL=lo.map((v,i)=>[X(i),Y(v)]);
@@ -267,37 +402,40 @@ function vDays(){
   for(let i=0;i<n;i++){
     dots+='<circle class="dd" data-i="'+i+'" cx="'+pH[i][0].toFixed(1)+'" cy="'+pH[i][1].toFixed(1)+'" r="4" fill="#fff" stroke="#ff8fe0" stroke-width="2"/>'
       +'<circle class="dd" data-i="'+i+'" cx="'+pL[i][0].toFixed(1)+'" cy="'+pL[i][1].toFixed(1)+'" r="4" fill="#fff" stroke="#4df3ff" stroke-width="2"/>';
-    lab+='<text x="'+pH[i][0].toFixed(1)+'" y="'+(pH[i][1]-13).toFixed(1)+'" font-size="15" font-weight="600" text-anchor="middle" fill="#fff">'+r(hi[i])+'°</text>'
-      +'<text x="'+pL[i][0].toFixed(1)+'" y="'+(pL[i][1]+26).toFixed(1)+'" font-size="13" text-anchor="middle" fill="var(--mut)">'+r(lo[i])+'°</text>';
-    const dt=new Date(d.time[i]+'T12:00'),pr=+d.precipitation_sum[i];
-    cols+='<div class="dc"><span class="wd">'+(i?dt.toLocaleDateString('uk',{weekday:'short'}):'Зараз')+'</span><span class="dn">'+dt.getDate()+'</span><span class="e">'+wi(d.weather_code[i])[0]+'</span>'
+    lab+='<text class="tl2" data-i="'+i+'" x="'+pH[i][0].toFixed(1)+'" y="'+(pH[i][1]-12).toFixed(1)+'" font-size="15" font-weight="600" text-anchor="middle" fill="#fff" opacity="0">'+r(hi[i])+'°</text>'
+      +'<text class="tl2" data-i="'+i+'" x="'+pL[i][0].toFixed(1)+'" y="'+(pL[i][1]+24).toFixed(1)+'" font-size="14" text-anchor="middle" fill="#fff" opacity="0">'+r(lo[i])+'°</text>';
+    const dt=new Date(d.time[i]+'T12:00'),pr=+d.precipitation_sum[i],code=d.weather_code[i];
+    cols+='<div class="dc"><span class="wd">'+dt.toLocaleDateString('uk',{weekday:'short'})+'</span>'+(i?'':'<span class="tdl">сьогодні</span>')
+      +'<span class="dn">'+dt.getDate()+'</span><svg class="di" viewBox="-15 -15 30 30">'+wxIcon(code,false)+'</svg><span class="ds">'+WS(code)+'</span>'
+      +'<b class="dh1">'+r(hi[i])+'°</b><span class="dl">'+r(lo[i])+'°</span>'
       +'<span class="pb"><i style="height:'+Math.round(Math.min(pr,10)/10*100)+'%"></i></span><span class="pm">'+(pr>=0.1?pr.toFixed(1)+' мм':'сухо')+'</span></div>'}
   const band=smooth(pH)+smooth(pL.slice().reverse()).replace('M','L')+'Z';
-  DG={n,cw};
-  return '<div class="glass"><div class="hint">Торкніться дня або проведіть по графіку, щоб побачити подробиці</div><div class="rd" id="drd"></div>'
+  DG={n};
+  return '<div class="glass"><div class="hint">Торкніться дня або проведіть по графіку</div><div class="rd" id="drd"></div>'
+   +'<div class="dwrap"><div class="hl" id="hl"></div><div class="dgrid">'+cols+'</div>'
    +'<svg id="dch" viewBox="0 0 '+W2+' '+H+'"><defs>'
    +'<linearGradient id="gmax" x1="0" x2="1"><stop offset="0" stop-color="#ff5fd2"/><stop offset="1" stop-color="#ffb347"/></linearGradient>'
    +'<linearGradient id="gmin" x1="0" x2="1"><stop offset="0" stop-color="#4df3ff"/><stop offset="1" stop-color="#8a7bff"/></linearGradient>'
    +'<linearGradient id="gband" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8fe0" stop-opacity=".28"/><stop offset="1" stop-color="#4df3ff" stop-opacity=".2"/></linearGradient>'
    +'<filter id="bl" x="-10%" y="-40%" width="120%" height="180%"><feGaussianBlur stdDeviation="5"/></filter></defs>'
-   +'<rect id="dh" y="'+(pt-32)+'" width="'+(cw-8).toFixed(1)+'" height="'+(H-pt-pb+64)+'" rx="16" fill="#fff" fill-opacity=".13"/>'
    +'<path d="'+band+'" fill="url(#gband)"/>'
    +'<path class="gl" d="'+smooth(pH)+'" fill="none" stroke="url(#gmax)" stroke-width="8" filter="url(#bl)"/><path d="'+smooth(pH)+'" fill="none" stroke="url(#gmax)" stroke-width="3.2" stroke-linecap="round"/>'
    +'<path class="gl" d="'+smooth(pL)+'" fill="none" stroke="url(#gmin)" stroke-width="8" filter="url(#bl)"/><path d="'+smooth(pL)+'" fill="none" stroke="url(#gmin)" stroke-width="3.2" stroke-linecap="round"/>'
-   +dots+lab+'</svg><div class="dgrid">'+cols+'</div></div>';
+   +dots+lab+'</svg></div></div>';
 }
 function daysInit(){
   const svg=$('dch'),g=DG,d=D.daily;
   const set=i=>{
     dsel=Math.max(0,Math.min(g.n-1,i));
-    $('dh').setAttribute('x',(dsel*g.cw+4).toFixed(1));
-    const dt=new Date(d.time[dsel]+'T12:00'),sr=d.sunrise[dsel].slice(11),ss=d.sunset[dsel].slice(11),len=clock(ss)-clock(sr),[em,tx]=wi(d.weather_code[dsel]);
-    $('drd').innerHTML='<span class="re">'+em+'</span><span class="rt">'+r(d.temperature_2m_max[dsel])+'°</span><span class="rx"><b>'+(dsel?cap(dt.toLocaleDateString('uk',{weekday:'long'})):'Сьогодні')
-      +'<em>'+dt.toLocaleDateString('uk',{day:'numeric',month:'long'})+'</em></b>'+tx+', вночі до '+r(d.temperature_2m_min[dsel])+'°<br>Опади '+(+d.precipitation_sum[dsel]).toFixed(1)
-      +' мм, світловий день '+Math.floor(len)+' год '+p2(Math.round((len%1)*60))+' хв ('+sr+'–'+ss+')</span>';
-    document.querySelectorAll('.dc').forEach((c,k)=>c.classList.toggle('on',k===dsel));
+    $('hl').style.left=(dsel*100/g.n)+'%';
+    const dt=new Date(d.time[dsel]+'T12:00'),sr=d.sunrise[dsel].slice(11),ss=d.sunset[dsel].slice(11),len=clock(ss)-clock(sr),code=d.weather_code[dsel],pr=+d.precipitation_sum[dsel];
+    $('drd').innerHTML='<svg class="ri" viewBox="-15 -15 30 30">'+wxIcon(code,false)+'</svg>'
+      +'<span class="rt">'+r(d.temperature_2m_max[dsel])+'°<small>/'+r(d.temperature_2m_min[dsel])+'°</small></span>'
+      +'<span class="rx"><b>'+cap(dt.toLocaleDateString('uk',{weekday:'long'}))+''+(dsel?'':'<i class="tg">сьогодні</i>')+'<em>'+dt.toLocaleDateString('uk',{day:'numeric',month:'long'})+'</em></b>'
+      +'<span class="ds2">'+wi(code)[1]+'</span><div class="st" style="margin-top:6px"><span>💧 '+(pr>=0.1?pr.toFixed(1)+' мм':'без опадів')+'</span><span>🌅 '+sr+'</span><span>🌇 '+ss+'</span><span>☀️ '+Math.floor(len)+' год '+p2(Math.round((len%1)*60))+' хв</span></div></span>';
+    document.querySelectorAll('.tl2').forEach(t=>t.setAttribute('opacity',+t.dataset.i===dsel?1:0));
     document.querySelectorAll('.dd').forEach(c=>c.setAttribute('r',+c.dataset.i===dsel?6.5:4));
-    document.body.className=skyCls(d.weather_code[dsel],false,false).trim();
+    document.body.className=skyCls(code,false,false).trim();
   };
   const at=e=>{const b=svg.getBoundingClientRect();set(Math.floor((e.clientX-b.left)/b.width*g.n))};
   svg.onpointerdown=e=>{svg.setPointerCapture(e.pointerId);at(e)};
@@ -346,6 +484,7 @@ function kidsFill(){
   if(uv>=3) tips.push(['🕶️',age===0?'УФ-індекс '+Math.round(uv)+': немовлят краще тримати в тіні, без прямого сонця.':'УФ-індекс '+Math.round(uv)+': головний убір і сонцезахисний крем.']);
   if(eff>=24) tips.push(['💧','Спекотно: пийте воду частіше й не залишайте дитину під сонцем у закритому авто чи колясці.']);
   if(L.l>=2) tips.push(['🧅','Одягайте шарами ('+L.l+'): базовий, утеплювач і верхній. Так легко зняти зайве, коли дитина зігрілась.']);
+  if(AQ&&AQ.aqi>=60) tips.push(['😷','Повітря забруднене (індекс '+AQ.aqi+'): прогулянку краще скоротити й обрати парк замість жвавої дороги.']);
   tips.push(['🤚','Перевірте шийку чи спинку: тепла й суха означає, що все гаразд; спітніла означає, що слід зняти шар; холодна означає, що слід додати.']);
   $('kt').textContent=(dt.slice(0,10)===today?'Сьогодні':'Завтра')+', '+dt.slice(11);
   $('kf').textContent='відчувається як '+r(feel)+'°';
@@ -406,6 +545,7 @@ $('geo').onclick=()=>{
 };
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;view()});
 load();
+if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>
